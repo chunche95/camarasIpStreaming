@@ -1,153 +1,177 @@
-# Sistema de Monitorización de Cámaras IP
+# IP Camera Monitoring System
 
-Sistema modular para la monitorización y gestión de cámaras IP desarrollado como parte del TFG "Sistema de Monitorización de Video para un Living Lab".
+Modular system for monitoring and managing IP cameras, developed as part of the final degree project (TFG) **"Video Monitoring System for a Living Lab."**
 
-## Características
+## Features
 
-- Descubrimiento automático de cámaras en la red
-- Streaming de vídeo de múltiples cámaras en tiempo real
-- Interfaz web responsive
-- Gestión centralizada de cámaras
-- Modo desarrollador para diagnóstico avanzado
+* Automatic discovery of cameras on the network
+* Real-time video streaming from multiple cameras
+* Responsive web interface
+* Centralized camera management
+* Developer mode for advanced diagnostics
 
-## Requisitos
+## Requirements
 
-- Node.js >= 16.x
-- FFmpeg
-- Docker y Docker Compose (opcional)
+* Node.js >= 16.x
+* FFmpeg
+* Docker and Docker Compose (optional)
 
-## Estructura del proyecto
+## Project Structure
 
-El proyecto sigue una arquitectura modular con separación clara entre backend y frontend:
+The project follows a modular architecture with a clear separation between the backend and frontend:
 
 ```
 /
-+-- backend/         # API y servicios de streaming (Node.js/Express)
-+-- frontend/        # Interfaz de usuario (React)
-+-- docker-compose.yml    # Configuración para desarrollo
-+-- docker-compose.prod.yml  # Configuración para producción
++-- backend/                 # API and streaming services (Node.js/Express)
++-- frontend/                # User interface (React)
++-- docker-compose.yml       # Development configuration
++-- docker-compose.prod.yml  # Production configuration
 ```
 
-## Instalación y configuración
+## Installation and Configuration
 
-### Usando Docker (recomendado)
+### Using Docker (recommended)
 
-1. Clonar el repositorio:
+1. Clone the repository:
+
    ```bash
    git clone https://github.com/example/camera-monitoring-system.git
    cd camera-monitoring-system
    ```
 
-2. Configurar las variables de entorno:
+2. Configure environment variables:
+
    ```bash
    cp backend/.env.example backend/.env
    cp frontend/.env.example frontend/.env
    ```
-   
-3. Editar los archivos `.env` para configurar:
-   - Rango de IPs para escaneo
-   - Credenciales por defecto para cámaras RTSP
-   - Puertos y configuración del sistema
 
-4. Iniciar el sistema con Docker Compose:
+3. Edit the `.env` files to set:
+
+   * IP range for network scanning
+   * Default credentials for RTSP cameras
+   * System ports and configuration
+
+4. Start the system with Docker Compose:
+
    ```bash
    docker-compose up -d
    ```
 
-5. Acceder a la aplicación:
-   - Frontend: http://localhost:3000
-   - API Backend: http://localhost:3033
+5. Access the application:
 
-### Instalación manual
+   * Frontend: [http://localhost:3000](http://localhost:3000)
+   * Backend API: [http://localhost:3033](http://localhost:3033)
+
+---
+
+### Manual Installation
 
 #### Backend
 
-1. Instalar dependencias:
+1. Install dependencies:
+
    ```bash
    cd backend
    npm install
    ```
 
-2. Iniciar el servidor:
+2. Start the development server:
+
    ```bash
    npm run dev
    ```
 
 #### Frontend
 
-1. Instalar dependencias:
+1. Install dependencies:
+
    ```bash
    cd frontend
    npm install
    ```
 
-2. Iniciar el servidor de desarrollo:
+2. Start the development server:
+
    ```bash
    npm start
    ```
 
-## Despliegue en producción
+---
 
-1. Configurar variables de entorno para producción:
+## Production Deployment
+
+1. Configure production environment variables:
+
    ```bash
    cp backend/.env.example backend/.env.prod
-   # Modificar las variables según el entorno
+   # Modify the variables according to your production environment
    ```
 
-2. Construir y desplegar con Docker Compose:
+2. Build and deploy with Docker Compose:
+
    ```bash
    docker-compose -f docker-compose.prod.yml up -d
    ```
 
-## Modo Desarrollador
+---
 
-El sistema incluye un modo desarrollador oculto para diagnóstico y gestión avanzada:
+## Developer Mode
 
-1. Acceder a la interfaz web
-2. Ir a "Configurar cámaras"
-3. Presionar la tecla "D" cinco veces consecutivas
-4. El panel de desarrollador aparecerá con opciones avanzadas:
-   - Gestión CRUD completa de cámaras
-   - Diagnóstico de conexión
-   - Reinicio de streams
-   - Logs del sistema
+The system includes a hidden developer mode for diagnostics and advanced management:
 
-## API REST
+1. Access the web interface
+2. Go to **"Configure Cameras"**
+3. Press the **"D"** key five times in a row
+4. The developer panel will appear with advanced options:
 
-La API incluye endpoints para:
+   * Full CRUD management for cameras
+   * Connection diagnostics
+   * Stream restart tools
+   * System logs
 
-- `GET /api/cameras` - Obtener cámaras activas
-- `GET /api/cameras/all` - Obtener todas las cámaras
-- `POST /api/cameras/scan` - Iniciar escaneo de red
-- `PUT /api/cameras/:id` - Actualizar estado de una cámara
-- `PUT /api/cameras/:id/display-name` - Actualizar nombre de visualización
-- `POST /api/cameras/add` - Añadir cámara manualmente
-- `DELETE /api/cameras/:id` - Eliminar cámara
-- `POST /api/cameras/restart-streams` - Reiniciar todos los streams
+---
 
-## Arquitectura
+## REST API
+
+The API includes the following endpoints:
+
+* `GET /api/cameras` â€“ Get active cameras
+* `GET /api/cameras/all` â€“ Get all cameras
+* `POST /api/cameras/scan` â€“ Start network scan
+* `PUT /api/cameras/:id` â€“ Update camera status
+* `PUT /api/cameras/:id/display-name` â€“ Update display name
+* `POST /api/cameras/add` â€“ Add a camera manually
+* `DELETE /api/cameras/:id` â€“ Delete a camera
+* `POST /api/cameras/restart-streams` â€“ Restart all streams
+
+---
+
+## Architecture
 
 ### Backend
 
-Estructura modular basada en principios SOLID y Clean Architecture:
+Modular structure based on **SOLID** principles and **Clean Architecture**:
 
-- **Controladores**: Manejan las peticiones HTTP
-- **Modelos**: Abstracción de datos
-- **Servicios**: Lógica de negocio
-- **Utilidades**: Funciones auxiliares
+* **Controllers** â€“ Handle HTTP requests
+* **Models** â€“ Data abstraction
+* **Services** â€“ Business logic
+* **Utilities** â€“ Helper functions
 
 ### Frontend
 
-Arquitectura basada en componentes React con:
+Component-based architecture using React:
 
-- **Context API**: Gestión centralizada de estado
-- **Hooks personalizados**: Lógica reutilizable
-- **Componentes atómicos**: UI modular y reutilizable
+* **Context API** â€“ Centralized state management
+* **Custom Hooks** â€“ Reusable logic
+* **Atomic Components** â€“ Modular, reusable UI elements
 
-## Licencia
+---
 
-Este proyecto es privado y para uso exclusivo como parte del TFG "Sistema de Monitorización de Video para un Living Lab".
+## License
 
-## Autor
+This project is private and intended exclusively for use as part of the TFG **"Video Monitoring System for a Living Lab."**
 
-Paulino Esteban Bermúdez Rodríguez
+## Author
+
+**Paulino Esteban BermÃºdez RodrÃ­guez**
