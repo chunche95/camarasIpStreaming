@@ -1,0 +1,68 @@
+# backend/Dockerfile.prod
+FROM node:18-alpine as builder
+
+# Crear directorio de la aplicación
+WORKDIR /app
+
+# Copiar archivos de dependencias
+COPY package*.json ./
+
+# Instalar dependencias
+RUN npm ci --only=production
+
+# Copiar el código fuente
+COPY . .
+
+# Etapa de producción
+FROM node:18-alpine
+
+# Instalar FFmpeg
+RUN apk add --no-cache ffmpeg
+
+# Crear directorio de la aplicación
+WORKDIR /app
+
+# Copiar desde la etapa de build
+COPY --from=builder /app ./
+
+# Crear directorios necesarios
+RUN mkdir -p streams logs data
+
+# Exponer puerto
+EXPOSE 3033
+
+# Comando para iniciar en producción
+CMD ["node", "server.js"]
+
+# frontend/Dockerfile.prod
+FROM node:18-alpine as builder
+
+# Crear directorio de la aplicación
+WORKDIR /app
+
+# Copiar archivos de dependencias
+COPY package*.json ./
+
+# Instalar dependencias
+RUN npm ci
+
+# Copiar el código fuente
+COPY . .
+
+# Construir la aplicación
+RUN npm run build
+
+# Etapa de producción con Nginx
+FROM nginx:alpine
+
+# Copiar la configuración de Nginx
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Copiar los archivos de build
+COPY --from=builder /app/build /usr/share/nginx/html
+
+# Exponer puerto
+EXPOSE 80
+
+# Comando para iniciar Nginx
+CMD ["nginx", "-g", "daemon off;"]

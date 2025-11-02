@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: camera-backend
+    restart: unless-stopped
+    ports:
+      - "${BACKEND_PORT:-3033}:3033"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+      - camera-streams:/app/streams
+    env_file:
+      - ./backend/.env
+    environment:
+      - NODE_ENV=development
+    networks:
+      - camera-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: camera-frontend
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    env_file:
+      - ./frontend/.env
+    environment:
+      - NODE_ENV=development
+      - REACT_APP_API_URL=http://localhost:${BACKEND_PORT:-3033}
+    depends_on:
+      - backend
+    networks:
+      - camera-network
+
+volumes:
+  camera-streams:
+
+networks:
+  camera-network:
+    driver: bridge

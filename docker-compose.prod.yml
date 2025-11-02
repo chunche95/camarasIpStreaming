@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod
+    container_name: camera-backend-prod
+    restart: always
+    ports:
+      - "3033:3033"
+    volumes:
+      - camera-data:/app/data
+      - camera-streams:/app/streams
+      - camera-logs:/app/logs
+    env_file:
+      - ./backend/.env.prod
+    environment:
+      - NODE_ENV=production
+    networks:
+      - camera-network
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3033/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+    container_name: camera-frontend-prod
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - camera-network
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  camera-data:
+  camera-streams:
+  camera-logs:
+
+networks:
+  camera-network:
+    driver: bridge
